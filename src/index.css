@@ -9,6 +9,22 @@
 }
 
 @layer components {
+  .hero-headline {
+    text-shadow: 0 1px 0 #a99e8d, 0 2px 0 #665b4d, 0 4px 5px rgb(0 0 0 / 25%), 0 10px 24px rgb(0 0 0 / 35%);
+  }
+  .hero-typed {
+    color: #e1b96d;
+    text-shadow: 0 1px 0 #9c7338, 0 2px 0 #705022, 0 4px 5px rgb(0 0 0 / 25%), 0 8px 20px rgb(0 0 0 / 30%);
+  }
+  .hero-caret {
+    display: inline-block;
+    width: 2px;
+    height: 0.85em;
+    margin-left: 0.08em;
+    vertical-align: -0.04em;
+    background: currentColor;
+    animation: caret-blink 0.7s step-end infinite;
+  }
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-md bg-brass px-5 py-2.5
       font-semibold text-ink hover:bg-brass-dark hover:text-paper transition-colors
@@ -36,4 +52,12 @@
   .section-eyebrow {
     @apply text-xs font-semibold uppercase tracking-[0.18em] text-clay;
   }
+}
+
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-caret { display: none; animation: none; }
 }

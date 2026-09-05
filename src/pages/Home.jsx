@@ -5,6 +5,7 @@ import SalonCard from "../components/salon/SalonCard.jsx";
 import LoadingSpinner from "../components/common/LoadingSpinner.jsx";
 import EmptyState from "../components/common/EmptyState.jsx";
 import heroImage from "../assets/images/hero-barbershop.png";
+import TypedHeadline from "../components/common/TypedHeadline.jsx";
 
 const PAGE_SIZE = 6;
 
@@ -107,11 +108,7 @@ export default function Home() {
         <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 md:py-24">
           <div className="max-w-xl">
             <p className="section-eyebrow text-brass">Local barbers, one tap away</p>
-            <h1 className="mt-3 font-display text-4xl font-semibold leading-tight text-paper sm:text-5xl">
-              Find your chair.
-              <br />
-              Book your <span className="text-brass">next cut.</span>
-            </h1>
+            <TypedHeadline />
             <p className="mt-4 max-w-md text-paper/75">
               Compare nearby barbers and salons, pick services, choose a barber you trust, and lock in a time slot.
             </p>
