@@ -135,9 +135,9 @@ export default function Booking() {
       <h1 className="mt-2 text-2xl font-semibold">Book an appointment</h1>
 
       {/* Step indicator */}
-      <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1">
+      <div aria-label="Booking progress" className="mt-6 grid grid-cols-5 gap-1 sm:gap-2">
         {STEPS.map((label, i) => (
-          <div key={label} className="flex items-center gap-2">
+          <div key={label} aria-current={i === step ? "step" : undefined} className="flex min-w-0 flex-col items-center gap-2 text-center">
             <div
               className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
                 i <= step ? "bg-brass text-ink" : "bg-line text-ink-soft"
@@ -145,16 +145,15 @@ export default function Booking() {
             >
               {i + 1}
             </div>
-            <span className={`whitespace-nowrap text-sm ${i === step ? "font-semibold text-ink" : "text-ink-soft"}`}>
+            <span className={`text-xs sm:text-sm ${i === step ? "font-semibold text-ink" : "text-ink-soft"}`}>
               {label}
             </span>
-            {i < STEPS.length - 1 && <span className="mx-1 h-px w-6 bg-line" />}
           </div>
         ))}
       </div>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 sm:mt-8 lg:grid-cols-3 lg:gap-8">
+        <div className="min-w-0 lg:col-span-2">
           {step === 0 && (
             <ServiceSelector services={services} selectedIds={selectedServiceIds} onToggle={toggleService} />
           )}
@@ -293,15 +292,15 @@ export default function Booking() {
         </div>
 
         {/* Ticket-style summary sidebar */}
-        <aside className="h-fit rounded-lg border border-line bg-white p-5 shadow-sm">
+        <aside className="min-w-0 h-fit break-words rounded-lg border border-line bg-white p-5 shadow-sm">
           <p className="section-eyebrow">Your booking</p>
           <p className="mt-2 font-display text-lg font-semibold">{salon.name}</p>
           {selectedServices.length > 0 ? (
             <ul className="mt-3 space-y-1.5 text-sm text-ink-soft">
               {selectedServices.map((s) => (
-                <li key={s._id} className="flex justify-between">
+                <li key={s._id} className="flex justify-between gap-3">
                   <span>{s.name}</span>
-                  <span>{formatCurrency(s.price)}</span>
+                  <span className="shrink-0">{formatCurrency(s.price)}</span>
                 </li>
               ))}
             </ul>
@@ -323,9 +322,9 @@ export default function Booking() {
 
 function Row({ label, value }) {
   return (
-    <div className="flex justify-between border-b border-line/70 pb-2">
+    <div className="flex flex-col gap-1 border-b border-line/70 pb-2 sm:flex-row sm:justify-between sm:gap-4">
       <dt className="text-ink-soft">{label}</dt>
-      <dd className="font-medium text-ink">{value}</dd>
+      <dd className="min-w-0 break-words font-medium text-ink sm:text-right">{value}</dd>
     </div>
   );
 }

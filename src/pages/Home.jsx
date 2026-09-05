@@ -4,6 +4,7 @@ import { fetchSalons } from "../api/salonApi.js";
 import SalonCard from "../components/salon/SalonCard.jsx";
 import LoadingSpinner from "../components/common/LoadingSpinner.jsx";
 import EmptyState from "../components/common/EmptyState.jsx";
+import heroImage from "../assets/images/hero-barbershop.png";
 
 const PAGE_SIZE = 6;
 
@@ -95,16 +96,23 @@ export default function Home() {
 
   return (
     <div>
-      <section className="bg-ink text-paper">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center md:py-24">
-          <div>
+      <section className="relative overflow-hidden bg-ink text-paper">
+        <img
+          src={heroImage}
+          alt="A barber preparing a chair in a modern salon"
+          className="absolute inset-0 h-full w-full object-cover object-[62%_center]"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(27,23,20,0.92)_0%,rgba(27,23,20,0.76)_42%,rgba(27,23,20,0.24)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(27,23,20,0.76)_0%,rgba(27,23,20,0)_42%)] md:hidden" />
+        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 md:py-24">
+          <div className="max-w-xl">
             <p className="section-eyebrow text-brass">Local barbers, one tap away</p>
             <h1 className="mt-3 font-display text-4xl font-semibold leading-tight text-paper sm:text-5xl">
               Find your chair.
               <br />
               Book your <span className="text-brass">next cut.</span>
             </h1>
-            <p className="mt-4 max-w-md text-paper/70">
+            <p className="mt-4 max-w-md text-paper/75">
               Compare nearby barbers and salons, pick services, choose a barber you trust, and lock in a time slot.
             </p>
 
@@ -113,22 +121,12 @@ export default function Home() {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="Enter your city"
-                className="min-w-0 flex-1 rounded-md border-0 px-4 py-3 text-ink placeholder:text-ink-soft/50 focus:outline-none focus:ring-2 focus:ring-brass"
+                className="min-w-0 flex-1 rounded-md border-0 bg-white px-4 py-3 text-ink placeholder:text-ink-soft/50 focus:outline-none focus:ring-2 focus:ring-brass"
               />
               <button type="submit" className="btn-primary shrink-0">
                 Search
               </button>
             </form>
-          </div>
-
-          <div className="relative hidden md:block">
-            <div className="overflow-hidden rounded-lg border border-paper/10">
-              <img
-                src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1400&q=85"
-                alt="A barber at work"
-                className="h-full w-full object-cover"
-              />
-            </div>
           </div>
         </div>
         <div className="barber-stripe" />

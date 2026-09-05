@@ -6,6 +6,7 @@ import { useAuthStore } from "../store/authStore.js";
 export default function Login() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { login } = useAuthStore();
@@ -36,8 +37,10 @@ export default function Login() {
 
       <form onSubmit={handleSubmit} className="card space-y-4 p-6">
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink">Phone number</label>
+          <label htmlFor="phone" className="mb-1 block text-sm font-medium text-ink">Phone number</label>
           <input
+            id="phone"
+            autoComplete="username"
             type="tel"
             required
             value={phone}
@@ -47,15 +50,33 @@ export default function Login() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink">Password</label>
+          <label htmlFor="password" className="mb-1 block text-sm font-medium text-ink">Password</label>
+          <div className="relative">
           <input
-            type="password"
+            id="password"
+            autoComplete="current-password"
+            type={showPassword ? "text" : "password"}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="input-field"
+            className="input-field min-h-11 pr-12 text-base"
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword((visible) => !visible)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-controls="password"
+            aria-pressed={showPassword}
+            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-md text-ink-soft hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5" aria-hidden="true">
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+              <circle cx="12" cy="12" r="3" />
+              {showPassword && <path d="m3 3 18 18" />}
+            </svg>
+          </button>
+          </div>
         </div>
         <button type="submit" disabled={isSubmitting} className="btn-primary w-full">
           {isSubmitting ? "Logging in..." : "Log in"}

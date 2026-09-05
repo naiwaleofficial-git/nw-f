@@ -8,7 +8,7 @@ export default function DateSelector({ selectedDate, onSelect, daysAhead = 10 })
   });
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2">
+    <div aria-label="Available dates" className="flex w-full min-w-0 gap-2 overflow-x-auto overscroll-x-contain pb-2">
       {dates.map((d) => {
         const iso = toISODate(d);
         const checked = selectedDate === iso;
@@ -16,8 +16,9 @@ export default function DateSelector({ selectedDate, onSelect, daysAhead = 10 })
           <button
             type="button"
             key={iso}
+            aria-pressed={checked}
             onClick={() => onSelect(iso)}
-            className={`flex min-w-[72px] flex-col items-center rounded-md border px-3 py-2 text-sm transition-colors ${
+            className={`flex min-h-11 min-w-[72px] shrink-0 flex-col items-center justify-center rounded-md border px-3 py-2 text-sm transition-colors ${
               checked ? "border-brass bg-brass text-ink" : "border-line text-ink-soft hover:border-ink/30"
             }`}
           >
