@@ -6,6 +6,7 @@ import LoadingSpinner from "../components/common/LoadingSpinner.jsx";
 import EmptyState from "../components/common/EmptyState.jsx";
 import heroImage from "../assets/images/hero-barbershop.png";
 import TypedHeadline from "../components/common/TypedHeadline.jsx";
+import NearbySalons from "../components/salon/NearbySalons.jsx";
 
 const PAGE_SIZE = 6;
 
@@ -128,6 +129,8 @@ export default function Home() {
         </div>
         <div className="barber-stripe" />
       </section>
+
+      <NearbySalons />
 
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
