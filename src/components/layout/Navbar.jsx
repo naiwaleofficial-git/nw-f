@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore.js";
+import BrandLogo from "../common/BrandLogo.jsx";
+import { dashboardFor } from "../../utils/navigation.js";
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const dashboard = isAuthenticated ? dashboardFor(user?.role) : null;
 
   const handleLogout = async () => {
     await logout();
@@ -38,13 +41,12 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur">
       <div className="barber-stripe" />
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="font-display text-xl font-semibold tracking-tight text-ink">
-            Nai<span className="text-clay">Wale</span>
-          </span>
+        <Link to={dashboard || "/"} onClick={closeMenu} className="flex items-center gap-2">
+          <BrandLogo />
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
+          {!dashboard && <>
           <NavLink to="/" className={navLinkClass} end>
             Home
           </NavLink>
@@ -62,6 +64,7 @@ export default function Navbar() {
               My Bookings
             </NavLink>
           )}
+          </>}
           {isAuthenticated && user?.role === "SALON_OWNER" && (
             <NavLink to="/owner" className={navLinkClass}>
               Owner Dashboard
@@ -124,6 +127,7 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="border-t border-line bg-paper px-4 pb-4 pt-2 shadow-lg md:hidden">
           <div className="mx-auto flex max-w-6xl flex-col gap-1">
+            {!dashboard && <>
             <NavLink to="/" className={mobileNavLinkClass} onClick={closeMenu} end>
               Home
             </NavLink>
@@ -141,6 +145,7 @@ export default function Navbar() {
                 My Bookings
               </NavLink>
             )}
+            </>}
             {isAuthenticated && user?.role === "SALON_OWNER" && (
               <NavLink to="/owner" className={mobileNavLinkClass} onClick={closeMenu}>
                 Owner Dashboard

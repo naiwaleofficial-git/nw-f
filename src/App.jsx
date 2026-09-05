@@ -5,6 +5,7 @@ import { useAuthStore } from "./store/authStore.js";
 import Navbar from "./components/layout/Navbar.jsx";
 import Footer from "./components/layout/Footer.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import CustomerLayout from "./routes/CustomerLayout.jsx";
 
 import Home from "./pages/Home.jsx";
 import Search from "./pages/Search.jsx";
@@ -34,6 +35,7 @@ export default function App() {
 
       <main className="flex-1">
         <Routes>
+          <Route element={<CustomerLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />
           <Route path="/salons/:id" element={<SalonDetails />} />
@@ -51,6 +53,8 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          </Route>
 
           <Route
             path="/owner"

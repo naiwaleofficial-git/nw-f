@@ -1,4 +1,7 @@
 import { Link } from "react-router-dom";
+import BrandLogo from "../common/BrandLogo.jsx";
+import { useAuthStore } from "../../store/authStore.js";
+import { dashboardFor } from "../../utils/navigation.js";
 
 const SOCIAL_LINKS = [
   { label: "Instagram", handle: "@naiwaleapp", href: "https://instagram.com/naiwaleapp" },
@@ -8,14 +11,24 @@ const SOCIAL_LINKS = [
 ];
 
 export default function Footer() {
+  const { user, isAuthenticated } = useAuthStore();
+  const dashboard = isAuthenticated ? dashboardFor(user?.role) : null;
+  if (dashboard) {
+    return (
+      <footer className="mt-8 border-t border-line px-4 py-5">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
+          <Link to={dashboard}><BrandLogo /></Link>
+          <p className="text-xs text-ink-soft">Copyright {new Date().getFullYear()} NaiWale.</p>
+        </div>
+      </footer>
+    );
+  }
   return (
     <footer className="mt-20 border-t border-line bg-ink text-paper/80">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="font-display text-lg font-semibold text-paper">
-              Nai<span className="text-brass">Wale</span>
-            </p>
+            <Link to="/"><BrandLogo inverse /></Link>
             <p className="mt-2 max-w-xs text-sm text-paper/60">
               Discover nearby barbers and salons, compare services, and book a chair in a couple of taps.
             </p>

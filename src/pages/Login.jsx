@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../store/authStore.js";
+import { dashboardFor } from "../utils/navigation.js";
 
 export default function Login() {
   const [phone, setPhone] = useState("");
@@ -19,7 +20,7 @@ export default function Login() {
     try {
       const user = await login({ phone, password });
       toast.success(`Welcome back, ${user.name.split(" ")[0]}!`);
-      const redirectTo = location.state?.from?.pathname || (user.role === "ADMIN" ? "/admin" : user.role === "SALON_OWNER" ? "/owner" : "/");
+      const redirectTo = dashboardFor(user.role) || location.state?.from?.pathname || "/";
       navigate(redirectTo, { replace: true });
     } catch (err) {
       toast.error(err.message);
