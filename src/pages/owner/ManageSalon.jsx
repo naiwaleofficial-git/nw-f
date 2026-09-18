@@ -1,3 +1,4 @@
+import BookingDesk from '../../components/booking/BookingDesk.jsx';
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -5,48 +6,37 @@ import {
   fetchSalon,
   fetchBarbers,
   createBarber,
-  updateBarber,
   deleteBarber,
   fetchServices,
   createService,
-  updateService,
   deleteService,
-  fetchSalonBookings,
 } from "../../api/salonApi.js";
-import { updateBookingStatus } from "../../api/bookingApi.js";
 import LoadingSpinner from "../../components/common/LoadingSpinner.jsx";
 import Badge from "../../components/common/Badge.jsx";
-import { formatCurrency, formatDuration, formatDateLabel, formatTime, statusColor } from "../../utils/formatters.js";
+import { formatCurrency, formatDuration } from "../../utils/formatters.js";
 
 const TABS = ["Barbers", "Services", "Bookings"];
-const NEXT_STATUS = {
-  PENDING: "CONFIRMED",
-  CONFIRMED: "CHECKED_IN",
-  CHECKED_IN: "IN_PROGRESS",
-  IN_PROGRESS: "COMPLETED",
-};
+
 
 export default function ManageSalon() {
   const { salonId } = useParams();
   const [salon, setSalon] = useState(null);
-  const [tab, setTab] = useState("Barbers");
+  const [tab, setTab] = useState("Bookings");
   const [isLoading, setIsLoading] = useState(true);
 
   const [barbers, setBarbers] = useState([]);
   const [services, setServices] = useState([]);
-  const [bookings, setBookings] = useState([]);
 
   const [barberForm, setBarberForm] = useState({ name: "", phone: "", experienceYears: "" });
   const [serviceForm, setServiceForm] = useState({ name: "", category: "Haircut", price: "", durationMinutes: "" });
 
   const loadAll = () => {
     setIsLoading(true);
-    Promise.all([fetchSalon(salonId), fetchBarbers(salonId), fetchServices(salonId), fetchSalonBookings(salonId)])
-      .then(([s, b, sv, bk]) => {
+    Promise.all([fetchSalon(salonId), fetchBarbers(salonId), fetchServices(salonId)])
+      .then(([s, b, sv]) => {
         setSalon(s.data);
         setBarbers(b.data);
         setServices(sv.data);
-        setBookings(bk.data);
       })
       .catch((err) => toast.error(err.message))
       .finally(() => setIsLoading(false));
@@ -110,29 +100,6 @@ export default function ManageSalon() {
     try {
       await deleteService(id);
       toast.success("Service removed");
-      loadAll();
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
-
-  const handleAdvanceStatus = async (booking) => {
-    const next = NEXT_STATUS[booking.bookingStatus];
-    if (!next) return;
-    try {
-      await updateBookingStatus(booking._id, next);
-      toast.success(`Marked as ${next.replace("_", " ").toLowerCase()}`);
-      loadAll();
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
-
-  const handleCancelByOwner = async (booking) => {
-    if (!confirm("Cancel this booking?")) return;
-    try {
-      await updateBookingStatus(booking._id, "CANCELLED");
-      toast.success("Booking cancelled");
       loadAll();
     } catch (err) {
       toast.error(err.message);
@@ -300,36 +267,8 @@ export default function ManageSalon() {
         </div>
       )}
 
-      {tab === "Bookings" && (
-        <div className="mt-6 space-y-3">
-          {bookings.length === 0 ? (
-            <p className="text-sm text-ink-soft">No bookings yet.</p>
-          ) : (
-            bookings.map((b) => (
-              <div key={b._id} className="card flex flex-wrap items-center justify-between gap-3 p-4">
-                <div>
-                  <p className="font-medium text-ink">{b.customerId?.name} · with {b.barberId?.name}</p>
-                  <p className="text-sm text-ink-soft">
-                    {formatDateLabel(b.startTime)} · {formatTime(b.startTime)} – {formatTime(b.endTime)}
-                  </p>
-                  <p className="text-xs text-ink-soft">{b.services.map((s) => s.name).join(", ")}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge className={statusColor(b.bookingStatus)}>{b.bookingStatus.replace("_", " ")}</Badge>
-                  {NEXT_STATUS[b.bookingStatus] && (
-                    <button onClick={() => handleAdvanceStatus(b)} className="btn-secondary text-xs">
-                      Mark {NEXT_STATUS[b.bookingStatus].replace("_", " ").toLowerCase()}
-                    </button>
-                  )}
-                  {["PENDING", "CONFIRMED"].includes(b.bookingStatus) && (
-                    <button onClick={() => handleCancelByOwner(b)} className="btn-danger text-xs">Cancel</button>
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+      {tab === 'Bookings' && <BookingDesk salon={salon} barbers={barbers} services={services} />}
+
     </div>
   );
 }

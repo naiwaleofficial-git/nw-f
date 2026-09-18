@@ -24,7 +24,7 @@ export default function MyBookings() {
       .finally(() => setIsLoading(false));
   };
 
-  useEffect(load, []);
+  useEffect(() => { load(); const refresh = () => fetchMyBookings().then((r) => setBookings(r.data)).catch(() => {}); const timer = setInterval(refresh, 15000); window.addEventListener('booking-updated', refresh); return () => { clearInterval(timer); window.removeEventListener('booking-updated', refresh); }; }, []);
 
   const handleCancel = async (id) => {
     if (!confirm("Cancel this booking?")) return;
@@ -98,7 +98,7 @@ export default function MyBookings() {
               </div>
 
               <div className="mt-3 flex gap-2">
-                {["PENDING", "CONFIRMED"].includes(b.bookingStatus) && (
+                {(b.bookingStatus === "PENDING" || (["ACCEPTED", "CONFIRMED"].includes(b.bookingStatus) && +new Date(b.startTime) - Date.now() > 600000)) && (
                   <button onClick={() => handleCancel(b._id)} className="btn-danger">
                     Cancel Booking
                   </button>

@@ -19,6 +19,7 @@ import Help from "./pages/Help.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 import OwnerDashboard from "./pages/owner/OwnerDashboard.jsx";
+import OwnerRegistration from './pages/owner/OwnerRegistration.jsx';
 import ManageSalon from "./pages/owner/ManageSalon.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 
@@ -35,6 +36,7 @@ export default function App() {
 
       <main className="flex-1">
         <Routes>
+          <Route path="/owner/register" element={<OwnerRegistration />} />
           <Route element={<CustomerLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />

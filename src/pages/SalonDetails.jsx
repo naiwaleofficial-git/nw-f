@@ -1,3 +1,4 @@
+import { mediaUrl } from '../utils/media.js';
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -55,7 +56,7 @@ export default function SalonDetails() {
   return (
     <div>
       <div className="h-64 w-full overflow-hidden bg-line sm:h-80">
-        <img src={salon.coverImage} alt={salon.name} className="h-full w-full object-cover" />
+        <img src={mediaUrl(salon.coverImage)} alt={salon.name} className="h-full w-full object-cover" />
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">

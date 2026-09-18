@@ -31,6 +31,7 @@ export default function Register() {
       <div className="text-center">
         <h1 className="text-2xl font-semibold">Create your account</h1>
         <p className="mt-1 text-sm text-ink-soft">Book appointments, or list your salon.</p>
+        <Link to="/owner/register" className="btn-secondary mt-4">Shopkeeper registration / OTP login</Link>
       </div>
 
       <form onSubmit={handleSubmit} className="card space-y-4 p-6">
@@ -68,7 +69,7 @@ export default function Register() {
               <button
                 type="button"
                 key={opt.value}
-                onClick={() => setForm((f) => ({ ...f, role: opt.value }))}
+                onClick={() => opt.value === 'SALON_OWNER' ? navigate('/owner/register') : setForm((f) => ({ ...f, role: opt.value }))}
                 className={`rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
                   form.role === opt.value ? "border-brass bg-brass/10 text-ink" : "border-line text-ink-soft"
                 }`}

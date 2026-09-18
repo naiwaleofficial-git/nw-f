@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { fetchSalon, fetchServices, fetchBarbers } from "../api/salonApi.js";
-import { fetchAvailableSlots, createBooking } from "../api/bookingApi.js";
+import { fetchAvailableSlots, createBooking, holdSlot, releaseHold } from "../api/bookingApi.js";
 import { useAuthStore } from "../store/authStore.js";
 import ServiceSelector from "../components/booking/ServiceSelector.jsx";
 import BarberSelector from "../components/booking/BarberSelector.jsx";
@@ -30,6 +30,34 @@ export default function Booking() {
   const [slots, setSlots] = useState([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [hold, setHold] = useState(null);
+  const holdRef = useRef(null);
+  const selectionVersion = useRef(0);
+  const [holding, setHolding] = useState(false);
+  const [now, setNow] = useState(Date.now());
+  const [refresh, setRefresh] = useState(0);
+
+  useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
+  useEffect(() => () => { selectionVersion.current++; if (holdRef.current) releaseHold(holdRef.current).catch(() => {}); }, []);
+  useEffect(() => {
+    if (hold && now >= +new Date(hold.expiresAt)) {
+      setHold(null); holdRef.current = null; setSelectedSlot(null); setStep(2); setRefresh((n) => n + 1);
+      toast.error('Your slot hold expired. Please select a slot again.');
+    }
+  }, [now, hold]);
+
+  const selectSlot = async (slot) => {
+    if (holding) return;
+    if (!isAuthenticated) { navigate('/login', { state: { from: { pathname: `/salons/${salonId}/book` } } }); return; }
+    const version = ++selectionVersion.current;
+    setHolding(true);
+    try {
+      const res = await holdSlot({ salonId, barberId, serviceIds: selectedServiceIds, startTime: slot.startTime });
+      if (version !== selectionVersion.current) { await releaseHold(res.data._id); return; }
+      holdRef.current = res.data._id; setHold(res.data); setSelectedSlot(slot);
+    } catch (error) { toast.error(error.message); setRefresh((n) => n + 1); }
+    finally { setHolding(false); }
+  };
 
   const [bookingFor, setBookingFor] = useState("SELF");
   const [otherDetails, setOtherDetails] = useState({ name: "", phone: "", gender: "MALE" });
@@ -67,6 +95,10 @@ export default function Booking() {
 
     setSlotsLoading(true);
     setSelectedSlot(null);
+    selectionVersion.current++;
+    if (holdRef.current) releaseHold(holdRef.current).catch(() => {});
+    holdRef.current = null; setHold(null);
+    let active = true;
 
     fetchAvailableSlots({
       salonId,
@@ -74,18 +106,18 @@ export default function Booking() {
       serviceIds: selectedServiceIds.join(","),
       date,
     })
-      .then((res) => setSlots(res.data.slots))
+      .then((res) => { if (active) setSlots(res.data.slots); })
       .catch((err) => {
-        toast.error(err.message);
-        setSlots([]);
+        if (active) { toast.error(err.message); setSlots([]); }
       })
-      .finally(() => setSlotsLoading(false));
-  }, [barberId, selectedServiceIds, date, salonId]);
+      .finally(() => { if (active) setSlotsLoading(false); });
+    return () => { active = false; };
+  }, [barberId, selectedServiceIds, date, salonId, refresh]);
 
   const canGoNext = () => {
     if (step === 0) return selectedServiceIds.length > 0;
     if (step === 1) return !!barberId;
-    if (step === 2) return !!selectedSlot;
+    if (step === 2) return !!selectedSlot && !!hold && !holding;
     if (step === 3) return bookingFor === "SELF" || (otherDetails.name && otherDetails.phone);
     return true;
   };
@@ -100,6 +132,7 @@ export default function Booking() {
     setIsSubmitting(true);
     try {
       const payload = {
+        holdId: hold?._id,
         salonId,
         barberId,
         serviceIds: selectedServiceIds,
@@ -112,13 +145,15 @@ export default function Booking() {
       };
 
       const res = await createBooking(payload);
-      toast.success("Booking confirmed!");
+      holdRef.current = null; setHold(null);
+      toast.success(res.data.bookingStatus === 'ACCEPTED' ? 'Booking accepted!' : 'Booking requested. Waiting for shop acceptance.');
       navigate(`/my-bookings`, { state: { newBookingId: res.data._id } });
     } catch (err) {
       toast.error(err.message);
       // slot may have just been taken — refresh slots
       setStep(2);
       setSelectedSlot(null);
+      setRefresh((n) => n + 1);
     } finally {
       setIsSubmitting(false);
     }
@@ -133,6 +168,8 @@ export default function Booking() {
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       <Link to={`/salons/${salonId}`} className="text-sm text-ink-soft hover:text-ink">← Back to {salon.name}</Link>
       <h1 className="mt-2 text-2xl font-semibold">Book an appointment</h1>
+      {hold && <p role="status" className="mt-3 rounded bg-amber-50 p-3 text-sm">Slot held for {Math.floor(Math.max(0, +new Date(hold.expiresAt) - now) / 60000)}:{String(Math.floor(Math.max(0, +new Date(hold.expiresAt) - now) / 1000) % 60).padStart(2, '0')}. Complete your booking before it expires.</p>}
+      {holding && <p role="status">Holding your slot…</p>}
 
       {/* Step indicator */}
       <div aria-label="Booking progress" className="mt-6 grid grid-cols-5 gap-1 sm:gap-2">
@@ -178,7 +215,7 @@ export default function Booking() {
                 {slotsLoading ? (
                   <LoadingSpinner label="Checking availability..." />
                 ) : (
-                  <TimeSlotPicker slots={slots} selectedStart={selectedSlot?.startTime} onSelect={setSelectedSlot} />
+                  <TimeSlotPicker slots={slots} selectedStart={selectedSlot?.startTime} onSelect={selectSlot} />
                 )}
               </div>
             </div>
@@ -266,7 +303,7 @@ export default function Booking() {
                 <Row label="Booking for" value={bookingFor === "SELF" ? "Myself" : otherDetails.name} />
                 <Row label="Payment" value={paymentMethod === "ONLINE" ? "Pay online" : "Pay at salon"} />
               </dl>
-              <button onClick={handleSubmit} disabled={isSubmitting} className="btn-primary mt-6 w-full">
+              <button onClick={handleSubmit} disabled={isSubmitting || !hold} className="btn-primary mt-6 w-full">
                 {isSubmitting ? "Confirming..." : `Confirm Booking · ${formatCurrency(totalPrice)}`}
               </button>
               {!isAuthenticated && (

@@ -1,3 +1,4 @@
+import { mediaUrl } from '../../utils/media.js';
 import { Link } from "react-router-dom";
 import StarRating from "../common/StarRating.jsx";
 import Badge from "../common/Badge.jsx";
@@ -13,7 +14,7 @@ export default function SalonCard({ salon }) {
     >
       <div className="relative h-40 w-full overflow-hidden bg-line">
         <img
-          src={salon.coverImage || salon.images?.[0]}
+          src={mediaUrl(salon.coverImage || salon.images?.[0])}
           alt={salon.name}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"

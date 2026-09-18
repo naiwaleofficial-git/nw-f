@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore.js";
 import BrandLogo from "../common/BrandLogo.jsx";
 import { dashboardFor } from "../../utils/navigation.js";
+import Notifications from '../booking/Notifications.jsx';
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuthStore();
@@ -97,6 +98,7 @@ export default function Navbar() {
           )}
         </div>
 
+        <Notifications />
         <button
           type="button"
           aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}

@@ -4,6 +4,7 @@ import { fetchSalons } from "../api/salonApi.js";
 import SalonCard from "../components/salon/SalonCard.jsx";
 import LoadingSpinner from "../components/common/LoadingSpinner.jsx";
 import EmptyState from "../components/common/EmptyState.jsx";
+import ShopsMap from '../components/salon/ShopsMap.jsx';
 
 const PAGE_SIZE = 12;
 
@@ -28,9 +29,11 @@ export default function Search() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [total, setTotal] = useState(0);
+  const [showMap, setShowMap] = useState(false);
   const loadMoreRef = useRef(null);
 
   const city = searchParams.get("city") || "";
+  const area = searchParams.get('area') || '';
   const q = searchParams.get("q") || "";
   const service = searchParams.get("service") || "";
   const category = searchParams.get("category") || "";
@@ -40,7 +43,7 @@ export default function Search() {
   useEffect(() => {
     setIsLoading(true);
     setPage(1);
-    fetchSalons({ city, q, service, category, priceLevel, minRating, page: 1, limit: PAGE_SIZE })
+    fetchSalons({ city, area, q, service, category, priceLevel, minRating, page: 1, limit: PAGE_SIZE })
       .then((res) => {
         setSalons(res.data);
         setTotal(res.pagination.total);
@@ -52,7 +55,7 @@ export default function Search() {
         setHasMore(false);
       })
       .finally(() => setIsLoading(false));
-  }, [city, q, service, category, priceLevel, minRating]);
+  }, [city, area, q, service, category, priceLevel, minRating]);
 
   useEffect(() => {
     const sentinel = loadMoreRef.current;
@@ -63,7 +66,7 @@ export default function Search() {
 
       const nextPage = page + 1;
       setIsLoadingMore(true);
-      fetchSalons({ city, q, service, category, priceLevel, minRating, page: nextPage, limit: PAGE_SIZE })
+      fetchSalons({ city, area, q, service, category, priceLevel, minRating, page: nextPage, limit: PAGE_SIZE })
         .then((res) => {
           setSalons((current) => [...current, ...res.data]);
           setPage(nextPage);
@@ -75,7 +78,7 @@ export default function Search() {
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [city, q, service, category, priceLevel, minRating, page, hasMore, isLoading, isLoadingMore]);
+  }, [city, area, q, service, category, priceLevel, minRating, page, hasMore, isLoading, isLoadingMore]);
 
   const updateParam = (key, value) => {
     const next = new URLSearchParams(searchParams);
@@ -100,6 +103,7 @@ export default function Search() {
       </div>
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-6">
+        <input aria-label="Area" key={`area-${area}`} defaultValue={area} onBlur={(e) => updateParam('area', e.target.value)} placeholder="Area / street" className="input-field" />
         <input
           key={`city-${city}`}
           defaultValue={city}
@@ -145,6 +149,8 @@ export default function Search() {
       <p className="mt-4 text-sm text-ink-soft">
         {isLoading ? "Searching..." : `Showing ${salons.length} of ${total} salons`}
       </p>
+      <button className="btn-secondary mt-3" onClick={() => setShowMap(!showMap)}>{showMap ? 'Hide map' : 'View shops on map'}</button>
+      {showMap && !isLoading && <ShopsMap salons={salons} />}
 
       {isLoading ? (
         <LoadingSpinner />
