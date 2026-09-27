@@ -11,14 +11,14 @@ import NearbySalons from "../components/salon/NearbySalons.jsx";
 const PAGE_SIZE = 6;
 
 const SERVICES = [
-  { label: "Haircut", short: "S1" },
-  { label: "Massage", short: "S2" },
-  { label: "Manicure", short: "S3" },
-  { label: "Pedicure", short: "S4" },
-  { label: "Beard", short: "S5" },
-  { label: "Facial", short: "S6" },
-  { label: "Hair Spa", short: "S7" },
-  { label: "Threading", short: "S8" },
+  { label: "Haircut" },
+  { label: "Massage" },
+  { label: "Manicure" },
+  { label: "Pedicure" },
+  { label: "Beard" },
+  { label: "Facial" },
+  { label: "Hair Spa" },
+  { label: "Threading" },
 ];
 
 export default function Home() {
@@ -151,21 +151,20 @@ export default function Home() {
           </form>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mt-5 flex flex-wrap gap-3">
           {SERVICES.map((service) => (
             <button
               key={service.label}
+              type="button"
+              aria-pressed={selectedService === service.label}
               onClick={() => setSelectedService(service.label)}
-              className={`flex items-center justify-between rounded-lg border p-4 text-left transition-colors ${
+              className={`flex h-20 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-full border p-2 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 ${
                 selectedService === service.label
                   ? "border-brass bg-brass/10 text-ink"
                   : "border-line bg-white text-ink hover:border-brass"
               }`}
             >
-              <span>
-                <span className="block text-xs font-semibold uppercase text-clay">{service.short}</span>
-                <span className="text-sm font-medium">{service.label}</span>
-              </span>
+              <span className="text-xs font-medium">{service.label}</span>
               <span className="text-xs text-ink-soft">View</span>
             </button>
           ))}
