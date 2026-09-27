@@ -42,12 +42,12 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur">
       <div className="barber-stripe" />
-      <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link to={dashboard || "/"} onClick={closeMenu} className="flex items-center gap-2">
+      <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-6 sm:py-3">
+        <Link to={dashboard || "/"} onClick={closeMenu} className="mr-auto flex min-w-0 items-center lg:mr-0">
           <BrandLogo />
         </Link>
 
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           {!dashboard && <>
           <NavLink to="/" className={navLinkClass} end>
             Home
@@ -79,7 +79,7 @@ export default function Navbar() {
           )}
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 lg:flex">
           {isAuthenticated ? (
             <>
               <span className="hidden text-sm text-ink-soft sm:inline">Hi, {user?.name?.split(" ")[0]}</span>
@@ -106,7 +106,7 @@ export default function Navbar() {
           aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={isMenuOpen}
           onClick={() => setIsMenuOpen((open) => !open)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-ink/15 text-ink transition-colors hover:bg-ink hover:text-paper md:hidden"
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-ink/15 text-ink transition-colors hover:bg-ink hover:text-paper lg:hidden"
         >
           <span className="relative h-4 w-5">
             <span
@@ -129,7 +129,7 @@ export default function Navbar() {
       </nav>
 
       {isMenuOpen && (
-        <div className="border-t border-line bg-paper px-4 pb-4 pt-2 shadow-lg md:hidden">
+        <div className="border-t border-line bg-paper px-4 pb-4 pt-2 shadow-lg lg:hidden">
           <div className="mx-auto flex max-w-6xl flex-col gap-1">
             {!dashboard && <>
             <NavLink to="/" className={mobileNavLinkClass} onClick={closeMenu} end>
