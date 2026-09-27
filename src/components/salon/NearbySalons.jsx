@@ -16,7 +16,7 @@ export default function NearbySalons() {
       <p role="status" className="mt-3 text-sm text-ink-soft">
         {error || (status === "success"
           ? salons.length ? `Found ${salons.length} salons within 10 km${salons.length === 50 ? " (showing the nearest 50)" : ""}.` : "No salons found within 10 km. Try searching by city above."
-          : busy ? "Please wait while we find nearby salons." : "Select Turn on location in the navbar to find salons near you.")}
+          : busy ? "Please wait while we find nearby salons." : "Select the location icon in the navbar to find salons near you.")}
       </p>
       {status === "success" && salons.length > 0 && (
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -26,4 +26,5 @@ export default function NearbySalons() {
     </section>
   );
 }
+
 

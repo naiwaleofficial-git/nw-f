@@ -4,15 +4,13 @@ import { useAuthStore } from "../../store/authStore.js";
 import BrandLogo from "../common/BrandLogo.jsx";
 import { dashboardFor } from "../../utils/navigation.js";
 import Notifications from '../booking/Notifications.jsx';
-import { useLocationStore } from "../../store/locationStore.js";
+import LocationControl from "./LocationControl.jsx";
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const dashboard = isAuthenticated ? dashboardFor(user?.role) : null;
-  const { status: locationStatus, error: locationError, locate } = useLocationStore();
-  const locationBusy = locationStatus === "locating" || locationStatus === "loading";
 
   const handleLogout = async () => {
     await logout();
@@ -102,26 +100,7 @@ export default function Navbar() {
         </div>
 
         <Notifications />
-        {!dashboard && (
-          <div className="order-last flex w-full flex-col items-center gap-1 lg:order-none lg:w-auto">
-            <button
-              type="button"
-              onClick={locate}
-              disabled={locationBusy}
-              className="btn-secondary min-h-10 !px-3 !py-2 text-xs"
-              aria-describedby={locationError ? "navbar-location-error" : undefined}
-            >
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4 shrink-0">
-                <circle cx="12" cy="12" r="7" /><circle cx="12" cy="12" r="2" />
-                <path d="M12 2v3m0 14v3M2 12h3m14 0h3" />
-              </svg>
-              <span aria-live="polite">
-                {locationStatus === "locating" ? "Locating..." : locationStatus === "loading" ? "Finding salons..." : locationStatus === "success" ? "Refresh location" : "Turn on location"}
-              </span>
-            </button>
-            {locationError && <p id="navbar-location-error" role="alert" className="max-w-xs text-center text-xs text-clay">{locationError}</p>}
-          </div>
-        )}
+        {!dashboard && <LocationControl />}
         <button
           type="button"
           aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -207,3 +186,4 @@ export default function Navbar() {
     </header>
   );
 }
+

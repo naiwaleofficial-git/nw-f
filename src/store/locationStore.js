@@ -9,10 +9,12 @@ export const useLocationStore = create((set, get) => {
     status: "idle",
     error: "",
     salons: [],
+    locationActive: false,
     locate: () => {
       if (["locating", "loading"].includes(get().status)) return;
       setError("");
       if (!navigator.geolocation || !window.isSecureContext) {
+        set({ locationActive: false });
         setStatus("error");
         setError("Location is unavailable in this browser. Enter your city on the home page to search.");
         return;
@@ -20,6 +22,7 @@ export const useLocationStore = create((set, get) => {
       setStatus("locating");
       navigator.geolocation.getCurrentPosition(
         async ({ coords }) => {
+          set({ locationActive: true });
           setStatus("loading");
           try {
             const result = await fetchNearbySalons({ lat: coords.latitude, lng: coords.longitude, maxDistance: 10000 });
@@ -31,6 +34,7 @@ export const useLocationStore = create((set, get) => {
           }
         },
         (failure) => {
+          set({ locationActive: false });
           setStatus("error");
           setError(failure.code === 1
             ? "Location permission was denied. Allow location in your browser settings or enter your city on the home page."
