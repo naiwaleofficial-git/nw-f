@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocationStore } from "../../store/locationStore.js";
 
@@ -56,7 +56,7 @@ export default function LocationControl() {
         disabled={busy}
         aria-label={label}
         title={error || label}
-        className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-brass/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${locationActive ? "text-ink" : "text-clay"}`}
+        className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-brass/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${locationActive ? "text-ink" : "text-clay"}`}
       >
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={`h-5 w-5 ${!locationActive ? "motion-safe:animate-pulse" : ""}`}>
           <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z" />
@@ -79,3 +79,4 @@ export default function LocationControl() {
     </>
   );
 }
+

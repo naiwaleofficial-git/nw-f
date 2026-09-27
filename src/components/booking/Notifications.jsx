@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../api/axios.js';
@@ -81,9 +81,12 @@ export default function Notifications() {
     } catch { toast.error('Browser alerts are unavailable. Your inbox will still update.'); }
   };
   if (!isAuthenticated) return null;
-  return <div className="relative">
-    <button className="btn-secondary !px-3" onClick={() => setOpen(!open)} aria-label={`Notifications, ${unread} unread`}>🔔 {unread > 0 && <span>{unread}</span>}</button>
-    {open && <div className="absolute right-0 top-12 z-50 max-h-96 w-72 overflow-auto rounded-lg border border-line bg-white p-4 shadow-xl">
+  return <div className="shrink-0 lg:relative">
+    <button type="button" className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink hover:bg-brass/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="navbar-notifications" aria-label={`Notifications, ${unread} unread`}>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
+      {unread > 0 && <span className="absolute right-0 top-0 min-w-4 rounded-full bg-clay px-1 text-center text-[10px] font-semibold leading-4 text-white">{unread > 99 ? '99+' : unread}</span>}
+    </button>
+    {open && <div id="navbar-notifications" className="absolute right-3 top-full z-50 mt-2 max-h-[min(24rem,65dvh)] w-[calc(100%-1.5rem)] max-w-sm overflow-auto break-words rounded-lg border border-line bg-white p-4 shadow-xl sm:right-6 sm:w-80 lg:right-0 lg:top-12 lg:mt-0">
       <div className="flex items-center justify-between"><strong>Notifications</strong><button onClick={() => setOpen(false)} aria-label="Close notifications">✕</button></div>
       <button className="mt-2 text-sm text-clay" onClick={enable}>{enabled ? 'Alerts enabled' : 'Enable sound & browser alerts'}</button>
       <button className="mt-2 block text-xs" onClick={async () => { try { await api.put('/notifications/read', { ids: items.map((n) => n._id) }); setItems(items.map((n) => ({ ...n, read: true }))); setUnread(Math.max(0, unread - items.filter((n) => !n.read).length)); } catch (e) { toast.error(e.message); } }}>Mark displayed notifications as read</button>
@@ -92,3 +95,4 @@ export default function Notifications() {
     </div>}
   </div>;
 }
+
