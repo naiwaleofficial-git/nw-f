@@ -151,21 +151,34 @@ export default function Home() {
           </form>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-6 flex flex-wrap items-start justify-center gap-x-3 gap-y-5 sm:gap-x-5 sm:gap-y-6">
           {SERVICES.map((service) => (
             <button
               key={service.label}
               type="button"
               aria-pressed={selectedService === service.label}
               onClick={() => setSelectedService(service.label)}
-              className={`flex h-20 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-full border p-2 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 ${
-                selectedService === service.label
-                  ? "border-brass bg-brass/10 text-ink"
-                  : "border-line bg-white text-ink hover:border-brass"
-              }`}
+              className="group flex w-20 shrink-0 flex-col items-center gap-2 rounded-xl text-center text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-4 sm:w-24"
             >
-              <span className="text-xs font-medium">{service.label}</span>
-              <span className="text-xs text-ink-soft">View</span>
+              <span
+                className={`flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 p-1 transition-colors sm:h-24 sm:w-24 ${
+                  selectedService === service.label
+                    ? "border-brass bg-brass/10"
+                    : "border-line bg-white group-hover:border-brass"
+                }`}
+              >
+                <img
+                  src={`/images/services/${service.label.toLowerCase().replaceAll(" ", "-")}.svg`}
+                  alt=""
+                  width="100"
+                  height="100"
+                  loading="lazy"
+                  className="h-full w-full rounded-full object-cover"
+                />
+              </span>
+              <span className={`text-xs sm:text-sm ${selectedService === service.label ? "font-semibold text-clay" : "font-medium"}`}>
+                {service.label}
+              </span>
             </button>
           ))}
         </div>
